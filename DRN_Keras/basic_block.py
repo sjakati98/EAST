@@ -4,7 +4,7 @@ Author: Shishir Jakati
 Inspired by implementation here: https://github.com/dmolony3/DRN/blob/master/DRN.py
 """
 
-from keras.layers import Add, BatchNormalization, Conv2D, Activation
+from keras.layers import Add, BatchNormalization, Conv2D, Activation, Input
 
 def basic_block(input_channels, output_channels, strides=1, dilation=1, kernel=3, residual=True):
     """
