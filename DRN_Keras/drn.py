@@ -108,7 +108,7 @@ def build_DRN42(input_tensor):
     ## input block
     y = Conv2D(16, (7,7), name='layer1_1')(input_tensor)
     y = BatchNormalization()(y)
-    y = Activation('relu')
+    y = Activation('relu')(y)
 
     ## layer 1
     block = basic_block(16, 16)
