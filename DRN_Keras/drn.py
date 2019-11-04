@@ -111,32 +111,32 @@ def build_DRN42(input_tensor):
     y = Activation('relu')(y)
 
     ## layer 1
-    block = basic_block(16, 16)
+    block = basic_block(16, 16, "layer1", residual=False)
     y = block(y)
 
     ## layer 2
-    block = basic_block(16, 32, strides=2, residual=False)
+    block = basic_block(16, 32, "layer2", strides=2, residual=False)
     y = block(y)
 
     ## layer 3
-    block = basic_block(32, 64, strides=2, residual=False)
+    block = basic_block(32, 64, "layer3_1", strides=2, residual=False)
     y = block(y)
-    block = basic_block(64, 64, strides=2)
+    block = basic_block(64, 64, "layer3_2", strides=2)
     y = block(y)
     y = block(y)
 
     ## layer 4
-    block = basic_block(64, 128, strides=2, residual=False)
+    block = basic_block(64, 128, "layer4_1", strides=2, residual=False)
     y = block(y)
-    block = basic_block(128, 128, strides=2)
+    block = basic_block(128, 128, "layer4_1", strides=2)
     y = block(y)
     y = block(y)
     y = block(y)
 
     ## layer 5
-    block = basic_block(128, 256, dilation=2, residual=False)
+    block = basic_block(128, 256, "layer5_1", dilation=2, residual=False)
     y = block(y)
-    block = basic_block(256, 256, dilation=2)
+    block = basic_block(256, 256, "layer5_2", dilation=2)
     y = block(y)
     y = block(y)
     y = block(y)
@@ -144,18 +144,18 @@ def build_DRN42(input_tensor):
     y = block(y)
 
     ## layer 6
-    block = basic_block(256, 512, dilation=4, residual=False)
+    block = basic_block(256, 512, "layer6_1", dilation=4, residual=False)
     y = block(y)
-    block = basic_block(512, 512, dilation=4)
+    block = basic_block(512, 512, "layer6_2", dilation=4)
     y = block(y)
     y = block(y)
 
     ## layer 7
-    block = basic_block(512, 512, dilation=2, residual=False)
+    block = basic_block(512, 512, "layer7", dilation=2, residual=False)
     y = block(y)
 
     ## layer 8
-    block = basic_block(512, 512, residual=False)
+    block = basic_block(512, 512, "layer8", residual=False)
     y = block(y)
 
     return keras.models.Model(inputs=input_tensor, outputs=y)

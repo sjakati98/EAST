@@ -4,6 +4,7 @@ import keras
 import keras.backend as K
 import tensorflow as tf
 from DRN_Keras.drn import build_DRN26, build_DRN42
+from keras.applications.resnet50 import ResNet50
 from keras import regularizers
 from keras.layers import (Activation, BatchNormalization, Conv2D, Dropout,
                           Input, Lambda, Layer, MaxPooling2D, ZeroPadding2D,
