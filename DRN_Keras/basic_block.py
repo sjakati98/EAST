@@ -30,12 +30,12 @@ def basic_block(input_channels, output_channels, name, strides=1, dilation=1, ke
 
     ## first conv level
     y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name + "_conv1")(x)
-    y = BatchNormalization(name=name + "bn_1")(y)
+    # y = BatchNormalization(name=name + "bn_1")(y)
     y = Activation('relu', name=name + "relu_1")(y)
 
     ## second conv level
     y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name+ "conv_2")(y)
-    y = BatchNormalization(name=name + "bn_2")(y)
+    # y = BatchNormalization(name=name + "bn_2")(y)
 
     ## optional residual connection
     if residual:
