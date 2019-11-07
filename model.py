@@ -155,7 +155,7 @@ def basic_block(input_tensor, output_channels, name, strides=1, dilation=1, kern
         - repeat: Number of times to repeat block
     
     Outputs:
-        - model: BasicBlock Keras model
+        - model: BasicBlock Keras tensor
     """
 
     # input_tensor = Input(shape=(None, None, input_channels))
@@ -164,13 +164,21 @@ def basic_block(input_tensor, output_channels, name, strides=1, dilation=1, kern
     x = input_tensor
 
     ## first conv level
-    y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name + "_conv1")(x)
+    if residual:
+        y = SamePadConv2D(x, output_channels, name + "_conv1", strides=strides, dilation=dilation, kernel=kernel)
+    else:
+        y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name + "_conv1")(x)
+    
     y = BatchNormalization(momentum=0.997, epsilon=1e-5, scale=True, name=name + "bn_1")(y)
     y = Activation('relu', name=name + "relu_1")(y)
 
     for i in range(repeat):
         ## second conv level
-        y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name+ "conv_2" + str(i))(y)
+        if residual:
+            y = SamePadConv2D(y, output_channels, name + "_conv" + str(i), strides=strides, dilation=dilation, kernel=kernel)
+        else:
+            y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name + "_conv"  + str(i))(y)
+
         y = BatchNormalization(momentum=0.997, epsilon=1e-5, scale=True, name=name + "bn_2" + str(i))(y)
 
     ## optional residual connection
@@ -182,6 +190,34 @@ def basic_block(input_tensor, output_channels, name, strides=1, dilation=1, kern
     ## return block
     return y
 
+
+def SamePadConv2D(input_tensor, output_channels, name, strides=1, dilation=1, kernel=3):
+    """
+    Returns output tensor with same size
+    Inputs:
+        - input_tensor: Inputted tensor
+        - output_channels: Channel size of output tensor
+        - name: Name for the block
+        - strides: Stride length of convolutional filter
+        - dilation: Dilation rate of convolutional filter
+        - kernel: Kernel size of convolutional filter
+        - residual: Flag indicating whether the residual connection is used or not
+        - repeat: Number of times to repeat block
+    
+    Outputs:
+        - y: Padded and convoluted output tensor
+    """
+    ## get input size of tensor
+    input_size = K.int_shape(input_tensor)[1]
+    # Ensures padding = 'SAME' for ODD kernel selection 
+    padding = ((strides * (input_size - 1)) - input_size + (dilation * (kernel - 1))) // 2
+
+    padded = ZeroPadding2D(padding=padding)(input_tensor)
+    output = Conv2D(output_channels, (kernel, kernel), 
+        padding="VALID", strides=1, dilation_rate=dilation, name=name)(padded)
+    
+    return output
+    
 
 
 
