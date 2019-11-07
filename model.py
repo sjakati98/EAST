@@ -175,9 +175,9 @@ def basic_block(input_tensor, output_channels, name, strides=1, dilation=1, kern
     for i in range(repeat):
         ## second conv level
         if residual:
-            y = SamePadConv2D(y, output_channels, name + "_conv" + str(i), strides=strides, dilation=dilation, kernel=kernel)
+            y = SamePadConv2D(y, output_channels, name + "_conv" + str(2 + i), strides=strides, dilation=dilation, kernel=kernel)
         else:
-            y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name + "_conv"  + str(i))(y)
+            y = Conv2D(output_channels, (kernel, kernel), strides=(strides, strides), dilation_rate=(dilation, dilation), padding="same", name=name + "_conv"  + str(2 + i))(y)
 
         y = BatchNormalization(momentum=0.997, epsilon=1e-5, scale=True, name=name + "bn_2" + str(i))(y)
 
@@ -214,7 +214,7 @@ def SamePadConv2D(input_tensor, output_channels, name, strides=1, dilation=1, ke
 
     padded = ZeroPadding2D(padding=padding)(input_tensor)
     output = Conv2D(output_channels, (kernel, kernel), 
-        padding="VALID", strides=1, dilation_rate=dilation, name=name)(padded)
+        padding="VALID", strides=strides, dilation_rate=dilation, name=name)(padded)
     
     return output
     
