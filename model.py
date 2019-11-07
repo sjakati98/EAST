@@ -230,7 +230,7 @@ def build_DRN42(input_tensor=None):
         - model: DRNC_42 Keras Model
     """
     if input_tensor is None:
-        input_tensor = Input(shape=(None, None, 3))
+        input_tensor = Input(shape=(512, 512, 3))
 
     ## input block
     y = Conv2D(16, (7,7))(input_tensor)
